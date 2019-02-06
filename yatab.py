@@ -1,4 +1,5 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from admin import pin
 import logging
 updater = Updater(token='701820948:AAGQHguPM1Wk20_gnEkZZjRuisJQFo3Reyc')
 
@@ -18,7 +19,10 @@ def help(bot, update):
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, error)
+    log.warning('Update "%s" caused error "%s"', update, error)
+
+def unknown(bot, update):
+    bot.send_message(chat_id=update.message.chat_id, text="Sorry, I didn't understand that command.")
 
 def main():
     """main"""
@@ -27,9 +31,13 @@ def main():
     
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help))
+    dispatcher.add_handler(CommandHandler("pin", pin))
     
     #log errors
     dispatcher.add_error_handler(error)
+    
+    unknown_handler = MessageHandler(Filters.command, unknown)
+    dispatcher.add_handler(unknown_handler)
     
     #let's start the bot
     updater.start_polling()
